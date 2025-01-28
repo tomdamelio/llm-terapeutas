@@ -1,0 +1,38 @@
+{
+  "metadata": {
+    "conversation_id": "3fb6372b-9dee-40da-b43a-09c002c42118",
+    "timestamp": "2025-01-28T17:24:33.968908",
+    "version": "1.0"
+  },
+  "conversation": {
+    "responses": {
+      "main_concern": "Me dan miedo las cucarachas. Mucho miedo",
+      "symptoms_duration": "Hace ya años. pero siento que ahora me esta afectando mas que nunca",
+      "daily_impact": "Si, ultimamente me da miedo ir a trabajar. Porque tengo miedo que en el escritorio del trabajo haya alguna escondida",
+      "mood_changes": "Por fuera de eso no, pero siento mas miedo que nunca de las cucarachas",
+      "sleep_patterns": "Duermo menos, porque estoy hipervigilante",
+      "support_system": "Si, mi madre la verdad que me contiene mucho. Pero igual siento que cada vez estoy peor",
+      "previous_treatment": "Si, en el pasado fui a un psicologo pero no me sirvio",
+      "self_harm": "No",
+      "substance_use": "no",
+      "coping_mechanisms": "Intento irme del lugar. Y eso me ayuda, o siento que me ayuda"
+    },
+    "analysis": {
+      "urgency_level": "MEDIO",
+      "main_concerns": [
+        "Fobia específica (cucarachas)",
+        "Ansiedad y evitación en la vida diaria",
+        "Insomnio"
+      ],
+      "recommendations": [
+        "Consulta profesional en los próximos días para una evaluación y tratamiento adecuados"
+      ],
+      "risk_factors": [
+        "Antecedentes de atención psicológica que no ha resultado eficaz"
+      ],
+      "protective_factors": [
+        "Apoyo de la madre"
+      ]
+    }
+  }
+}

@@ -2,9 +2,10 @@
 Module for integrating with Google's Gemini LLM API.
 """
 import time
+import json
 from typing import Dict, Optional
 import google.generativeai as genai
-from . import config
+import config
 
 def initialize_llm() -> None:
     """
@@ -50,22 +51,39 @@ def process_response(response: str) -> Dict[str, any]:
     
     Returns:
         Dict[str, any]: Structured response containing:
-            - diagnosis (list): List of potential diagnoses
-            - urgency (str): Urgency level assessment
-            - recommendations (list): List of recommendations
-            - confidence (float): Confidence score of the assessment
+            - urgency_level (str): ALTO, MEDIO, o BAJO
+            - main_concerns (list): Lista de preocupaciones principales
+            - recommendations (list): Lista de recomendaciones
+            - risk_factors (list): Factores de riesgo identificados
+            - protective_factors (list): Factores protectores identificados
     """
     try:
-        # TODO: Implement proper response parsing based on the prompt structure
-        # This is a placeholder implementation
-        return {
-            'diagnosis': [],
-            'urgency': 'unknown',
-            'recommendations': [],
-            'confidence': 0.0
-        }
+        # Buscar el JSON en la respuesta
+        start_idx = response.find('{')
+        end_idx = response.rfind('}') + 1
+        
+        if start_idx == -1 or end_idx == 0:
+            raise ValueError("No se encontró formato JSON en la respuesta")
+            
+        json_str = response[start_idx:end_idx]
+        data = json.loads(json_str)
+        
+        # Validar campos requeridos
+        required_fields = ['urgency_level', 'main_concerns', 'recommendations']
+        for field in required_fields:
+            if field not in data:
+                raise ValueError(f"Campo requerido '{field}' no encontrado en la respuesta")
+        
+        # Asegurar que los campos opcionales existan
+        data.setdefault('risk_factors', [])
+        data.setdefault('protective_factors', [])
+        
+        return data
+        
+    except json.JSONDecodeError as e:
+        raise ValueError(f"Error al decodificar JSON de la respuesta: {str(e)}")
     except Exception as e:
-        raise ValueError(f"Failed to process LLM response: {str(e)}")
+        raise ValueError(f"Error al procesar respuesta del LLM: {str(e)}")
 
 def get_model_info() -> Optional[Dict[str, any]]:
     """

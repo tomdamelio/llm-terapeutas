@@ -1,4 +1,4 @@
-google-generativeai==0.3.1  # API de Gemini
+google-generativeai>=0.8.0  # API de Gemini
 python-dotenv==1.0.0        # Manejo de variables de entorno
 flask==3.0.0                # Framework web para la interfaz
 pydantic==2.5.2            # Validación de datos

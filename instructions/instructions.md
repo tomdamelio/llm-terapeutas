@@ -19,8 +19,16 @@ A continuación se detallan las funcionalidades clave, organizadas por fases y e
        1.1.4. Crear archivo `.gitignore` para excluir archivos sensibles
    1.2. Definir el archivo `requirements.txt` con las librerías iniciales
        1.2.1. Crear archivo `requirements.txt` en la raíz del proyecto
-       1.2.2. Añadir dependencias base: `openai`, `google-generativeai`, `python-dotenv`
-       1.2.3. Especificar versiones exactas de cada librería
+       1.2.2. Añadir dependencias base:
+           - google-generativeai==0.3.1  # API de Gemini
+           - python-dotenv==1.0.0        # Manejo de variables de entorno
+           - flask==3.0.0                # Framework web para la interfaz
+           - pydantic==2.5.2            # Validación de datos
+           - requests==2.31.0            # Cliente HTTP
+           - pytest==7.4.3               # Testing
+           - black==23.11.0              # Formateo de código
+           - pylint==3.0.2              # Análisis estático
+       1.2.3. Verificar compatibilidad entre versiones y actualizar según necesidad
    1.3. Generar una estructura base de archivos para el proyecto
        1.3.1. Crear directorio `src/` para código fuente
        1.3.2. Crear directorio `tests/` para pruebas unitarias

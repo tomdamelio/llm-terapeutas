@@ -1,0 +1,91 @@
+
+PRUEBAS DEL MÓDULO DE PROMPTS
+
+================================================================================
+
+TEST 1: Primera pregunta (sin respuestas previas)
+--------------------------------------------------
+Pregunta inicial:
+ID: main_concern
+Pregunta: ¿Cuál es el principal motivo por el que buscas ayuda en este momento?
+Propósito: Identificar la preocupación principal y nivel de malestar
+
+================================================================================
+
+TEST 2: Detección de palabras clave de riesgo
+--------------------------------------------------
+Respuesta del usuario con palabra clave de riesgo:
+'Me siento muy mal, a veces pienso en la muerte'
+
+Pregunta priorizada por riesgo:
+ID: self_harm
+Pregunta: ¿Has tenido pensamientos de hacerte daño o de que la vida no vale la pena?
+Propósito: Evaluar riesgo de autolesión
+Prioridad: high
+
+================================================================================
+
+TEST 3: Formateo del prompt de análisis
+--------------------------------------------------
+Respuestas del usuario:
+
+Pregunta: ¿Cuál es el principal motivo por el que buscas ayuda en este momento?
+Respuesta: Me siento muy ansioso últimamente
+
+Pregunta: ¿Desde hace cuánto tiempo te sientes así?
+Respuesta: Hace aproximadamente 2 meses
+
+Pregunta: ¿Cómo está afectando esta situación tu vida diaria (trabajo, relaciones, actividades)?
+Respuesta: Me cuesta concentrarme en el trabajo
+
+Componentes del prompt final:
+------------------------------
+1. Contexto base:
+
+Eres un asistente especializado en triage inicial de salud mental. Tu rol es ayudar a realizar una evaluación 
+preliminar para determinar la urgencia y posibles áreas de atención que requiere la persona.
+
+Directrices importantes:
+1. Mantén un tono profesional pero empático
+2. No realices diagnósticos definitivos, solo sugerencias preliminares
+3. Ante cualquier señal de riesgo inmediato, prioriza la seguridad del usuario
+4. Sé directo y claro en tus preguntas
+5. No des consejos terapéuticos, solo recomendaciones de búsqueda de ayuda profesional
+
+Contexto: Estás realizando un triage inicial para evaluar la situación del usuario y determinar la urgencia 
+de atención profesional requerida.
+
+
+2. Respuestas formateadas:
+Pregunta: ¿Cuál es el principal motivo por el que buscas ayuda en este momento?
+Respuesta: Me siento muy ansioso últimamente
+Pregunta: ¿Desde hace cuánto tiempo te sientes así?
+Respuesta: Hace aproximadamente 2 meses
+Pregunta: ¿Cómo está afectando esta situación tu vida diaria (trabajo, relaciones, actividades)?
+Respuesta: Me cuesta concentrarme en el trabajo
+
+3. Template de análisis:
+
+Basado en las respuestas proporcionadas, realiza un análisis considerando:
+
+1. Nivel de urgencia:
+   - ALTO: Riesgo inmediato de autolesión o crisis aguda
+   - MEDIO: Malestar significativo pero sin riesgo inmediato
+   - BAJO: Malestar manejable, puede esperar atención regular
+
+2. Áreas principales de preocupación (máximo 3)
+
+3. Recomendaciones inmediatas:
+   - Si es urgente: contacto inmediato con servicios de emergencia
+   - Si es medio: consulta profesional en los próximos días
+   - Si es bajo: consulta profesional para evaluación regular
+
+Formato de respuesta requerido:
+{
+    "urgency_level": "ALTO|MEDIO|BAJO",
+    "main_concerns": ["concern1", "concern2", "concern3"],
+    "recommendations": ["rec1", "rec2", "rec3"],
+    "risk_factors": ["risk1", "risk2"],
+    "protective_factors": ["protective1", "protective2"]
+}
+
