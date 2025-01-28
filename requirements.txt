@@ -1,0 +1,8 @@
+google-generativeai==0.3.1  # API de Gemini
+python-dotenv==1.0.0        # Manejo de variables de entorno
+flask==3.0.0                # Framework web para la interfaz
+pydantic==2.5.2            # Validación de datos
+requests==2.31.0            # Cliente HTTP
+pytest==7.4.3               # Testing
+black==23.11.0              # Formateo de código
+pylint==3.0.2              # Análisis estático 
