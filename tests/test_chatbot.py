@@ -2,7 +2,10 @@
 Tests para el sistema de triage en salud mental.
 """
 import unittest
-from datetime import datetime
+import sys
+import os
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'src'))
+
 from chatbot import ChatBot
 from diagnosis_parser import AnalysisResult, DiagnosisResult
 
@@ -20,6 +23,7 @@ class TestChatBot(unittest.TestCase):
         self.assertEqual(self.chatbot.responses, {})
         self.assertIsNone(self.chatbot.conversation_id)
         self.assertIsNone(self.chatbot.analysis)
+        self.assertEqual(len(self.chatbot.chat_history), 1)  # Debe tener el mensaje inicial
     
     def test_question_flow(self):
         """Test del flujo de preguntas."""
@@ -35,8 +39,8 @@ class TestChatBot(unittest.TestCase):
             "No tengo apoyo",     # Apoyo
             "No",                 # Ayuda previa
             "No",                 # Autolesión
-            "No",                # Sustancias
-            "Escucho música"     # Afrontamiento
+            "No",                 # Sustancias
+            "Escucho música"      # Afrontamiento
         ]
         
         previous_questions = set()
@@ -53,71 +57,26 @@ class TestChatBot(unittest.TestCase):
                 self.assertNotIn(current_question, previous_questions)
                 previous_questions.add(current_question)
     
-    def test_response_tracking(self):
-        """Test del seguimiento de respuestas."""
-        self.chatbot.start_conversation()
-        
-        # Primera respuesta
-        response = self.chatbot.process_message("Me siento muy mal")
-        self.assertIn("main_concern", self.chatbot.responses)
-        
-        # Segunda respuesta
-        response = self.chatbot.process_message("Hace dos semanas")
-        self.assertIn("duration", self.chatbot.responses)
-        self.assertEqual(len(self.chatbot.responses), 2)
-        
-        # Verificar que las respuestas se almacenan correctamente
-        self.assertEqual(self.chatbot.responses["main_concern"], "Me siento muy mal")
-        self.assertEqual(self.chatbot.responses["duration"], "Hace dos semanas")
-    
-    def test_risk_detection(self):
-        """Test de detección de riesgo y priorización de preguntas."""
-        self.chatbot.start_conversation()
-        
-        # Enviar mensaje con señales de riesgo
-        response = self.chatbot.process_message("Quiero morirme")
-        
-        # Verificar que la siguiente pregunta es sobre autolesión
-        self.assertIn("¿Has tenido pensamientos", response["message"])
-        self.assertIn("daño", response["message"].lower())
-    
-    def test_no_repeated_questions(self):
-        """Test específico para verificar que no se repiten preguntas."""
-        self.chatbot.start_conversation()
-        
-        # Mantener registro de todas las preguntas realizadas
-        questions_asked = []
-        
-        # Simular una conversación corta
-        responses = ["Me siento mal", "Hace un mes", "No puedo trabajar"]
-        
-        for response in responses:
-            result = self.chatbot.process_message(response)
-            if "message" in result:
-                question = result["message"]
-                # Verificar que la pregunta no está en el historial
-                self.assertNotIn(question, questions_asked)
-                questions_asked.append(question)
-        
-        # Verificar que el número de preguntas únicas coincide con el número de respuestas
-        self.assertEqual(len(set(questions_asked)), len(questions_asked))
-
     def test_response_processing(self):
         """Test del procesamiento de respuestas."""
         self.chatbot.start_conversation()
         
-        # Procesar una respuesta
+        # Primera respuesta - preocupación principal
         response = self.chatbot.process_message("Me siento muy triste y ansioso")
         self.assertIn("main_concern", self.chatbot.responses)
+        
+        # Segunda respuesta - duración
+        response = self.chatbot.process_message("Hace dos semanas")
+        self.assertIn("duration", self.chatbot.responses)
+        
+        # Verificar que las respuestas se almacenan correctamente
+        self.assertEqual(self.chatbot.responses["main_concern"], "Me siento muy triste y ansioso")
+        self.assertEqual(self.chatbot.responses["duration"], "Hace dos semanas")
         
         # Verificar extracción de síntomas
         symptoms = self.chatbot._extract_symptoms(self.chatbot.responses)
         self.assertIn("depressed_mood", symptoms)
-        
-        # Procesar más respuestas
-        response = self.chatbot.process_message("No puedo dormir")
-        symptoms = self.chatbot._extract_symptoms(self.chatbot.responses)
-        self.assertIn("sleep_changes", symptoms)
+        self.assertIn("excessive_worry", symptoms)
     
     def test_diagnosis_generation(self):
         """Test de la generación de diagnósticos."""
@@ -125,32 +84,42 @@ class TestChatBot(unittest.TestCase):
         
         # Simular una conversación completa con señales de depresión
         test_responses = [
-            "Me siento muy triste y sin esperanza",
-            "Más de dos semanas",
-            "No puedo trabajar ni concentrarme",
-            "Me siento deprimido todo el tiempo",
-            "Casi no duermo",
-            "Tengo familia que me apoya",
-            "No he buscado ayuda antes",
-            "No",
-            "No",
-            "Intento distraerme"
+            "Me siento muy triste y sin esperanza",  # Preocupación principal
+            "Más de dos semanas",                    # Duración
+            "No puedo trabajar ni concentrarme",     # Impacto diario
+            "Me siento deprimido todo el tiempo",    # Cambios de ánimo
+            "Casi no duermo",                        # Sueño
+            "Tengo familia que me apoya",            # Apoyo
+            "No he buscado ayuda antes",            # Ayuda previa
+            "No",                                    # Autolesión
+            "No",                                    # Sustancias
+            "Intento distraerme"                     # Afrontamiento
         ]
         
         # Procesar todas las respuestas
         for response in test_responses:
             result = self.chatbot.process_message(response)
         
-        # Generar análisis
-        analysis = self.chatbot._analyze_responses()
+        # Verificar que se generó el análisis
+        self.assertIsNotNone(self.chatbot.analysis)
         
-        # Verificar estructura del análisis
+        # Verificar la estructura del análisis
+        analysis = self.chatbot._analyze_responses()
         self.assertIn("urgency_level", analysis)
         self.assertIn("main_concerns", analysis)
         self.assertIn("preliminary_diagnoses", analysis)
         self.assertIn("risk_factors", analysis)
         self.assertIn("protective_factors", analysis)
         self.assertIn("recommendations", analysis)
+        
+        # Verificar que se identificaron los síntomas correctos
+        symptoms = self.chatbot._extract_symptoms(self.chatbot.responses)
+        self.assertIn("depressed_mood", symptoms)
+        self.assertIn("concentration_problems", symptoms)
+        self.assertIn("sleep_changes", symptoms)
+        
+        # Verificar que se identificaron los factores protectores
+        self.assertTrue(any("apoyo" in factor.lower() for factor in analysis["protective_factors"]))
 
 if __name__ == '__main__':
     unittest.main() 

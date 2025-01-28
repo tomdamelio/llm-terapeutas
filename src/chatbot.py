@@ -4,6 +4,8 @@ Module for the ChatBot implementation that handles the conversation flow.
 from typing import Dict, Optional, List, Tuple
 import json
 from datetime import datetime
+import logging
+import re
 
 from prompts import (
     get_conversation_prompt,
@@ -35,6 +37,33 @@ QUESTION_MAP = {
     "substance_use": "¿Has aumentado el consumo de alcohol u otras sustancias?",
     "coping_mechanisms": "¿Qué haces cuando te sientes así? ¿Qué te ayuda?"
 }
+
+# Configurar logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
+
+# Constantes para validación
+MAX_MESSAGE_LENGTH = 1000
+INVALID_CHARS_PATTERN = re.compile(r'[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]')
+
+class ChatBotError(Exception):
+    """Clase base para excepciones del chatbot."""
+    pass
+
+class InvalidInputError(ChatBotError):
+    """Error para entradas inválidas."""
+    pass
+
+class StorageError(ChatBotError):
+    """Error para problemas de almacenamiento."""
+    pass
+
+class AnalysisError(ChatBotError):
+    """Error para problemas en el análisis."""
+    pass
 
 class ChatBot:
     """
@@ -81,29 +110,45 @@ class ChatBot:
         Returns:
             Dict: Respuesta del chatbot con mensaje y análisis opcional
         """
-        if not self.conversation_active:
-            return {"message": "La conversación no está activa. Por favor, inicia una nueva conversación."}
-        
-        # Guardar el mensaje del usuario en el historial
-        self.chat_history.append(("USER", user_message))
-        
-        # Buscar la última pregunta del bot
-        last_question = None
-        last_question_id = None
-        for i in range(len(self.chat_history) - 2, -1, -1):
-            if self.chat_history[i][0] == "ASSISTANT":
-                last_question = self.chat_history[i][1]
-                # Encontrar el ID de la pregunta
-                for q_id, q_text in QUESTION_MAP.items():
-                    if q_text in last_question:
-                        last_question_id = q_id
-                        break
-                break
-        
-        # Actualizar respuestas solo si encontramos la pregunta correspondiente
-        if last_question_id and last_question_id not in self.responses:
-            self.responses[last_question_id] = user_message
-            self.covered_topics[last_question_id] = True
+        try:
+            # Validar el mensaje
+            if not user_message:
+                return {"error": "El mensaje no puede estar vacío"}
+            
+            if len(user_message) > MAX_MESSAGE_LENGTH:
+                return {"error": "El mensaje excede el límite de caracteres permitido"}
+            
+            if INVALID_CHARS_PATTERN.search(user_message):
+                return {"error": "El mensaje contiene caracteres inválidos"}
+            
+            if not self.conversation_active:
+                return {"message": "La conversación no está activa. Por favor, inicia una nueva conversación."}
+            
+            # Guardar el mensaje del usuario en el historial
+            self.chat_history.append(("USER", user_message))
+            
+            # Buscar la última pregunta del bot
+            last_question = None
+            last_question_id = None
+            for i in range(len(self.chat_history) - 2, -1, -1):
+                if self.chat_history[i][0] == "ASSISTANT":
+                    last_question = self.chat_history[i][1]
+                    # Encontrar el ID de la pregunta
+                    for q_id, q_text in QUESTION_MAP.items():
+                        if q_text in last_question:
+                            last_question_id = q_id
+                            break
+                    break
+            
+            # Si es la primera respuesta o no encontramos la pregunta anterior
+            if not self.responses or not last_question_id:
+                self.responses["main_concern"] = user_message
+                self.covered_topics["main_concern"] = True
+            else:
+                # Actualizar respuestas solo si encontramos la pregunta correspondiente
+                if last_question_id and last_question_id not in self.responses:
+                    self.responses[last_question_id] = user_message
+                    self.covered_topics[last_question_id] = True
             
             # Si es una respuesta con señales de riesgo, marcar self_harm
             message_lower = user_message.lower()
@@ -111,43 +156,38 @@ class ChatBot:
             if any(keyword in message_lower for keyword in risk_keywords) and "self_harm" not in self.responses:
                 self.responses["self_harm"] = user_message
                 self.covered_topics["self_harm"] = True
-        
-        # Obtener la siguiente pregunta
-        next_question_id = self._get_next_question()
-        
-        if next_question_id:
-            # Verificar que no estamos repitiendo la última pregunta
-            next_question = QUESTION_MAP[next_question_id]
-            if last_question == next_question:
-                # Si la pregunta se repetiría, buscar la siguiente
-                for q_id in QUESTION_MAP:
-                    if q_id not in self.responses and q_id != next_question_id:
-                        next_question_id = q_id
-                        next_question = QUESTION_MAP[q_id]
-                        break
             
-            # Si aún tenemos una pregunta válida, enviarla
-            if next_question_id and next_question_id not in self.responses:
-                self.chat_history.append(("ASSISTANT", next_question))
-                return {"message": next_question}
-            else:
-                # Si no hay más preguntas, proceder con el análisis
-                final_message = self._prepare_for_analysis()
-                analysis = self._analyze_responses()
-                self.chat_history.append(("ASSISTANT", final_message))
-                return {
-                    "message": final_message,
-                    "analysis": analysis
-                }
-        else:
-            # Si no hay más preguntas, proceder con el análisis
+            # Obtener la siguiente pregunta
+            next_question_id = self._get_next_question()
+            
+            if next_question_id:
+                next_question = QUESTION_MAP[next_question_id]
+                # Verificar que no estamos repitiendo la última pregunta
+                if last_question and last_question == next_question:
+                    # Si la pregunta se repetiría, buscar la siguiente
+                    for q_id in QUESTION_MAP:
+                        if q_id not in self.responses and q_id != next_question_id:
+                            next_question_id = q_id
+                            next_question = QUESTION_MAP[q_id]
+                            break
+                
+                # Si aún tenemos una pregunta válida, enviarla
+                if next_question_id and next_question_id not in self.responses:
+                    self.chat_history.append(("ASSISTANT", next_question))
+                    return {"message": next_question}
+            
+            # Si no hay más preguntas o no encontramos una válida, proceder con el análisis
             final_message = self._prepare_for_analysis()
             analysis = self._analyze_responses()
             self.chat_history.append(("ASSISTANT", final_message))
+            self.analysis = analysis  # Guardar el análisis en el objeto
             return {
                 "message": final_message,
                 "analysis": analysis
             }
+        except Exception as e:
+            logger.error(f"Error al procesar mensaje: {str(e)}")
+            return {"error": "Error interno al procesar el mensaje"}
     
     def _get_next_question(self) -> Optional[str]:
         """
@@ -354,6 +394,7 @@ class ChatBot:
             "ansios": "excessive_worry",
             "preocupad": "excessive_worry",
             "dormir": "sleep_changes",
+            "duerm": "sleep_changes",
             "insomnio": "sleep_changes",
             "cansad": "fatigue",
             "sin energía": "energy_loss",
@@ -388,8 +429,11 @@ class ChatBot:
         if "mood_changes" in responses and "sí" in responses["mood_changes"].lower():
             symptoms.append("mood_changes")
             
-        if "sleep" in responses and any(term in responses["sleep"].lower() for term in ["mal", "poco", "mucho", "problema"]):
-            symptoms.append("sleep_changes")
+        if "sleep" in responses:
+            sleep_response = responses["sleep"].lower()
+            sleep_problems = ["mal", "poco", "mucho", "problema", "no duermo", "casi no", "dificultad"]
+            if any(term in sleep_response for term in sleep_problems):
+                symptoms.append("sleep_changes")
             
         if "support" in responses and all(term not in responses["support"].lower() for term in ["sí", "si", "familia", "amigo"]):
             symptoms.append("lack_of_support")
@@ -402,75 +446,84 @@ class ChatBot:
         
         Returns:
             Dict: Análisis completo de las respuestas
+            
+        Raises:
+            AnalysisError: Si hay un error en el análisis
+            TimeoutError: Si el análisis toma demasiado tiempo
         """
-        # Extraer síntomas de las respuestas
-        symptoms = self._extract_symptoms(self.responses)
-        
-        # Calcular nivel de urgencia
-        urgency_level = calculate_urgency_level(symptoms, SYMPTOM_WEIGHTS)
-        
-        # Identificar posibles diagnósticos
-        preliminary_diagnoses = []
-        for condition, criteria in DIAGNOSTIC_CRITERIA.items():
-            if validate_diagnosis(symptoms, criteria):
-                # Calcular confianza basada en la cantidad de síntomas presentes
-                required_symptoms = criteria.get("required_symptoms", [])
-                additional_symptoms = criteria.get("additional_symptoms", [])
-                total_possible = len(required_symptoms) + len(additional_symptoms)
-                matched_symptoms = [s for s in symptoms if s in required_symptoms + additional_symptoms]
-                confidence = len(matched_symptoms) / total_possible * 100
-                
-                preliminary_diagnoses.append({
-                    "condition": condition,
-                    "confidence": confidence,
-                    "key_indicators": matched_symptoms
-                })
-        
-        # Identificar factores de riesgo
-        risk_factors = []
-        if "self_harm" in symptoms or "suicidal_ideation" in symptoms:
-            risk_factors.append("Riesgo de autolesión o ideación suicida")
-        if "substance_use" in symptoms:
-            risk_factors.append("Uso problemático de sustancias")
-        if "isolation" in symptoms:
-            risk_factors.append("Aislamiento social significativo")
-        
-        # Identificar factores protectores
-        protective_factors = []
-        if "support" in self.responses:
-            response = self.responses["support"].lower()
-            if "sí" in response or "si" in response or "familia" in response or "amigos" in response:
-                protective_factors.append("Red de apoyo social disponible")
-        
-        # Generar recomendaciones
-        recommendations = []
-        if urgency_level == "ALTO":
-            recommendations.append("Buscar ayuda profesional inmediata - contactar servicios de emergencia")
-            recommendations.append("No permanecer solo/a - contactar a un familiar o amigo de confianza")
-        elif urgency_level == "MEDIO":
-            recommendations.append("Programar consulta profesional en los próximos días")
-            recommendations.append("Mantener contacto regular con red de apoyo")
-        else:
-            recommendations.append("Programar una evaluación profesional cuando sea conveniente")
-            recommendations.append("Mantener registro de síntomas y su frecuencia")
-        
-        # Crear el análisis en formato JSON
-        analysis_json = {
-            "urgency_level": urgency_level,
-            "main_concerns": [s.replace("_", " ").title() for s in symptoms[:3]],
-            "preliminary_diagnoses": preliminary_diagnoses,
-            "risk_factors": risk_factors,
-            "protective_factors": protective_factors,
-            "recommendations": recommendations
-        }
-        
-        # Parsear y validar el análisis
-        self.analysis = parse_llm_response(json.dumps(analysis_json))
-        if not self.analysis:
-            raise ValueError("Error al parsear el análisis")
-        
-        # Retornar el análisis en formato JSON para la API
-        return format_json_response(self.analysis)
+        try:
+            # Extraer síntomas de las respuestas
+            symptoms = self._extract_symptoms(self.responses)
+            
+            # Calcular nivel de urgencia
+            urgency_level = calculate_urgency_level(symptoms, SYMPTOM_WEIGHTS)
+            
+            # Identificar posibles diagnósticos
+            preliminary_diagnoses = []
+            for condition, criteria in DIAGNOSTIC_CRITERIA.items():
+                if validate_diagnosis(symptoms, criteria):
+                    # Calcular confianza basada en la cantidad de síntomas presentes
+                    required_symptoms = criteria.get("required_symptoms", [])
+                    additional_symptoms = criteria.get("additional_symptoms", [])
+                    total_possible = len(required_symptoms) + len(additional_symptoms)
+                    matched_symptoms = [s for s in symptoms if s in required_symptoms + additional_symptoms]
+                    confidence = len(matched_symptoms) / total_possible * 100
+                    
+                    preliminary_diagnoses.append({
+                        "condition": condition,
+                        "confidence": confidence,
+                        "key_indicators": matched_symptoms
+                    })
+            
+            # Identificar factores de riesgo
+            risk_factors = []
+            if "self_harm" in symptoms or "suicidal_ideation" in symptoms:
+                risk_factors.append("Riesgo de autolesión o ideación suicida")
+            if "substance_use" in symptoms:
+                risk_factors.append("Uso problemático de sustancias")
+            if "isolation" in symptoms:
+                risk_factors.append("Aislamiento social significativo")
+            
+            # Identificar factores protectores
+            protective_factors = []
+            if "support" in self.responses:
+                response = self.responses["support"].lower()
+                if "sí" in response or "si" in response or "familia" in response or "amigos" in response:
+                    protective_factors.append("Red de apoyo social disponible")
+            
+            # Generar recomendaciones
+            recommendations = []
+            if urgency_level == "ALTO":
+                recommendations.append("Buscar ayuda profesional inmediata - contactar servicios de emergencia")
+                recommendations.append("No permanecer solo/a - contactar a un familiar o amigo de confianza")
+            elif urgency_level == "MEDIO":
+                recommendations.append("Programar consulta profesional en los próximos días")
+                recommendations.append("Mantener contacto regular con red de apoyo")
+            else:
+                recommendations.append("Programar una evaluación profesional cuando sea conveniente")
+                recommendations.append("Mantener registro de síntomas y su frecuencia")
+            
+            # Crear el análisis en formato JSON
+            analysis_json = {
+                "urgency_level": urgency_level,
+                "main_concerns": [s.replace("_", " ").title() for s in symptoms[:3]],
+                "preliminary_diagnoses": preliminary_diagnoses,
+                "risk_factors": risk_factors,
+                "protective_factors": protective_factors,
+                "recommendations": recommendations
+            }
+            
+            # Parsear y validar el análisis
+            self.analysis = parse_llm_response(json.dumps(analysis_json))
+            if not self.analysis:
+                raise AnalysisError("Error al parsear el análisis")
+            
+            # Retornar el análisis en formato JSON para la API
+            return format_json_response(self.analysis)
+            
+        except Exception as e:
+            logger.error(f"Error en el análisis de respuestas: {str(e)}")
+            raise AnalysisError(f"Error al analizar las respuestas: {str(e)}")
     
     def run_conversation(self) -> Optional[Dict]:
         """
