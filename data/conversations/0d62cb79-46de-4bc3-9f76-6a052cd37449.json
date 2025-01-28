@@ -1,0 +1,35 @@
+{
+  "metadata": {
+    "conversation_id": "0d62cb79-46de-4bc3-9f76-6a052cd37449",
+    "timestamp": "2025-01-28T18:00:30.558116",
+    "version": "1.0"
+  },
+  "conversation": {
+    "responses": {
+      "daily_impact": "Siiii",
+      "main_concern": "No me siento bien. Ayuda! Tengo miedo man",
+      "mood_changes": "Ahora dasojdpaskd",
+      "previous_treatment": "Si, mas de una vez!",
+      "self_harm": "No",
+      "sleep_patterns": "MJnhgfgnfhg",
+      "substance_use": "No",
+      "support_system": "Si, estoy con mi novio",
+      "symptoms_duration": "Hace unas horas, pero no puedo mas!",
+      "coping_mechanisms": "lloro"
+    },
+    "analysis": {
+      "urgency_level": "BAJO",
+      "main_concerns": [
+        "No me siento bien. Ayuda! Tengo miedo man"
+      ],
+      "recommendations": [
+        "Programar una consulta de evaluación cuando sea conveniente",
+        "Desarrollar una red de apoyo social y profesional"
+      ],
+      "risk_factors": [
+        "Ausencia de factores protectores identificables"
+      ],
+      "protective_factors": []
+    }
+  }
+}

@@ -1,136 +1,82 @@
 """
-Aplicación web Flask para el chatbot de triage en salud mental.
+Flask application for the Mental Health Triage Chatbot.
 """
-from flask import (
-    Flask,
-    render_template,
-    request,
-    jsonify,
-    session
-)
+from flask import Flask, request, jsonify, render_template
 from chatbot import ChatBot
 import storage
 
 app = Flask(__name__)
-# Configurar una clave secreta para las sesiones
-app.secret_key = 'tu_clave_secreta_aqui'  # En producción, usar una clave segura
+chatbot = ChatBot()
 
 @app.route('/')
 def home():
-    """Página principal con el chat."""
-    return render_template('chat.html')
+    """Render the chat interface."""
+    return render_template('index.html')
 
 @app.route('/api/start', methods=['POST'])
 def start_conversation():
-    """Inicia una nueva conversación."""
+    """Start a new conversation."""
     try:
-        bot = ChatBot()
-        bot.start_conversation()
-        
-        # Obtener la primera pregunta
-        next_question = bot.get_next_question({})
-        
-        # Guardar el estado en la sesión
-        session['responses'] = {}
-        
-        return jsonify({
-            'status': 'success',
-            'question': next_question['question'],
-            'question_id': next_question['id']
-        })
+        initial_message = chatbot.start_conversation()
+        return initial_message
     except Exception as e:
-        return jsonify({
-            'status': 'error',
-            'message': str(e)
-        }), 500
+        return jsonify({"error": str(e)}), 500
 
 @app.route('/api/chat', methods=['POST'])
 def chat():
-    """Procesa la respuesta del usuario y devuelve la siguiente pregunta."""
+    """Process a message and return the chatbot's response."""
     try:
-        data = request.json
-        response = data.get('response', '').strip()
-        question_id = data.get('question_id')
+        data = request.get_json()
+        if not data or 'message' not in data:
+            return jsonify({"error": "No message provided"}), 400
         
-        if not response or not question_id:
-            return jsonify({
-                'status': 'error',
-                'message': 'Respuesta o ID de pregunta faltante'
-            }), 400
+        response = chatbot.process_message(data['message'])
+        return jsonify(response)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/api/history')
+def get_history():
+    """Get the conversation history."""
+    try:
+        conversations = storage.get_conversation_history()
+        formatted_conversations = []
+        for conv in conversations:
+            formatted_conversations.append({
+                'id': conv['metadata']['conversation_id'],
+                'timestamp': conv['metadata']['timestamp']
+            })
+        return jsonify(formatted_conversations)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/api/conversation/<conversation_id>')
+def get_conversation(conversation_id):
+    """Get a specific conversation by ID."""
+    try:
+        conversation = storage.load_conversation(conversation_id)
+        if not conversation:
+            return jsonify({"error": "Conversation not found"}), 404
         
-        # Recuperar respuestas anteriores de la sesión
-        responses = session.get('responses', {})
-        responses[question_id] = response
-        session['responses'] = responses
-        
-        # Obtener siguiente pregunta
-        bot = ChatBot()
-        next_question = bot.get_next_question(responses)
-        
-        # Si no hay más preguntas, realizar análisis
-        if not next_question:
-            bot.responses = responses
-            analysis = bot.run_conversation()
-            
-            if analysis:
-                return jsonify({
-                    'status': 'success',
-                    'finished': True,
-                    'analysis': analysis,
-                    'conversation_id': bot.conversation_id
+        # Formatear los mensajes para la visualización
+        messages = []
+        for question_id, response in conversation['conversation']['responses'].items():
+            if question_id in chatbot.QUESTION_MAP:
+                messages.append({
+                    'role': 'ASSISTANT',
+                    'content': chatbot.QUESTION_MAP[question_id]
+                })
+                messages.append({
+                    'role': 'USER',
+                    'content': response
                 })
         
         return jsonify({
-            'status': 'success',
-            'finished': False,
-            'question': next_question['question'],
-            'question_id': next_question['id']
-        })
-        
-    except Exception as e:
-        return jsonify({
-            'status': 'error',
-            'message': str(e)
-        }), 500
-
-@app.route('/api/history', methods=['GET'])
-def get_history():
-    """Obtiene el historial de conversaciones."""
-    try:
-        conversations = storage.list_conversations(limit=10)
-        return jsonify({
-            'status': 'success',
-            'conversations': conversations
+            'messages': messages,
+            'analysis': conversation['conversation'].get('analysis')
         })
     except Exception as e:
-        return jsonify({
-            'status': 'error',
-            'message': str(e)
-        }), 500
-
-@app.route('/api/conversation/<conversation_id>', methods=['GET'])
-def get_conversation(conversation_id):
-    """Obtiene los detalles de una conversación específica."""
-    try:
-        bot = ChatBot()
-        if bot.load_conversation(conversation_id):
-            return jsonify({
-                'status': 'success',
-                'conversation': {
-                    'responses': bot.responses,
-                    'analysis': bot.analysis
-                }
-            })
-        else:
-            return jsonify({
-                'status': 'error',
-                'message': 'Conversación no encontrada'
-            }), 404
-    except Exception as e:
-        return jsonify({
-            'status': 'error',
-            'message': str(e)
-        }), 500
+        return jsonify({"error": str(e)}), 500
 
 if __name__ == '__main__':
     app.run(debug=True) 

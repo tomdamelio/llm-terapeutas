@@ -1,0 +1,36 @@
+{
+  "metadata": {
+    "conversation_id": "4938a083-5141-45af-80f6-a37d0bf76f20",
+    "timestamp": "2025-01-28T18:41:06.364147",
+    "version": "1.0"
+  },
+  "conversation": {
+    "responses": {
+      "daily_impact": "Me van a echar",
+      "duration": "6 meses",
+      "main_concern": "Tengo miedo",
+      "mood_changes": "Si, no siento nada mas que miedo",
+      "previous_help": "Si, no me funciono",
+      "self_harm": "Si",
+      "sleep": "duermo mal",
+      "substance_use": "Si",
+      "support": "Si, mi novio",
+      "coping_mechanisms": "Me corto un poco y eso me relaja"
+    },
+    "analysis": {
+      "urgency_level": "BAJO",
+      "main_concerns": [
+        "Fear"
+      ],
+      "preliminary_diagnoses": [],
+      "risk_factors": [],
+      "protective_factors": [
+        "Red de apoyo social disponible"
+      ],
+      "recommendations": [
+        "Programar una evaluación profesional cuando sea conveniente",
+        "Mantener registro de síntomas y su frecuencia"
+      ]
+    }
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "metadata": {
+    "conversation_id": "2817ee07-425e-45f1-9e41-f301411e079a",
+    "timestamp": "2025-01-28T18:19:46.013867",
+    "version": "1.0"
+  },
+  "conversation": {
+    "responses": {
+      "daily_impact": "mi pareja me va a cortar, no es la primera vez que me pasa. Le voy a tener que pedir ayuda a mi familia, y los voy a cansar",
+      "duration": "hace unas horas, me llegó la tarjeta de crédito, no puedo pagar mis cuentas",
+      "main_concern": "siento que me falta el aire",
+      "mood_changes": "si, me falta el aire, tengo mucha ansiedad, siento que no puedo",
+      "previous_help": "si, no me fue bien, no logré llegar al profesional adecuado. Si tan solo hubiera un software de triage",
+      "self_harm": "ahora estoy que me tiro del balcon jaja",
+      "sleep": "horrible",
+      "substance_use": "no",
+      "support": "si, pero no siento que me quieran ayudar",
+      "coping_mechanisms": "no sé que hacer, necesito ayuda"
+    },
+    "analysis": {
+      "urgency_level": "BAJO",
+      "main_concerns": [
+        "Isolation"
+      ],
+      "preliminary_diagnoses": [],
+      "risk_factors": [
+        "Aislamiento social significativo"
+      ],
+      "protective_factors": [
+        "Red de apoyo social disponible"
+      ],
+      "recommendations": [
+        "Programar una evaluación profesional cuando sea conveniente",
+        "Mantener registro de síntomas y su frecuencia"
+      ]
+    }
+  }
+}

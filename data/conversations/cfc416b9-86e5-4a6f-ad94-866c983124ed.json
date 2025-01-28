@@ -1,0 +1,38 @@
+{
+  "metadata": {
+    "conversation_id": "cfc416b9-86e5-4a6f-ad94-866c983124ed",
+    "timestamp": "2025-01-28T18:50:57.254072",
+    "version": "1.0"
+  },
+  "conversation": {
+    "responses": {
+      "daily_impact": "Mucho, en el trabajo",
+      "duration": "Hace meses",
+      "main_concern": "Tengo mucha ansiedad",
+      "mood_changes": "Si, estoy con mucho miedo y ansiedad en la vida",
+      "previous_help": "Si, pero  no me sirvio",
+      "self_harm": "Si",
+      "sleep": "Duermo poco. Me cuesta dormirme",
+      "substance_use": "No",
+      "support": "Si, mi mama",
+      "coping_mechanisms": "Nada. Me tiro a llorar en mi habitacion"
+    },
+    "analysis": {
+      "urgency_level": "BAJO",
+      "main_concerns": [
+        "Fear",
+        "Sleep Changes"
+      ],
+      "preliminary_diagnoses": [],
+      "risk_factors": [],
+      "protective_factors": [
+        "Red de apoyo social disponible"
+      ],
+      "recommendations": [
+        "Programar una evaluación profesional cuando sea conveniente",
+        "Mantener registro de síntomas y su frecuencia"
+      ],
+      "timestamp": "2025-01-28T18:44:59.141357"
+    }
+  }
+}

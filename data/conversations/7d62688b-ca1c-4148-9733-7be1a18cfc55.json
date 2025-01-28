@@ -1,0 +1,37 @@
+{
+  "metadata": {
+    "conversation_id": "7d62688b-ca1c-4148-9733-7be1a18cfc55",
+    "timestamp": "2025-01-28T18:04:39.961817",
+    "version": "1.0"
+  },
+  "conversation": {
+    "responses": {
+      "daily_impact": "estoy enojada todo el tiempo, odio a todo el mundo, me molesta todo",
+      "main_concern": "quiero morir",
+      "mood_changes": "bueno en realidad me estoy enojando mas que antes, pero siempre me enojo",
+      "previous_treatment": "tengo un psicologo que me ve 3 veces por semana, porque dice que no necesito mas",
+      "self_harm": "sii que la vida no vale la pena,",
+      "sleep_patterns": "me despierto siempre a la noche, a eso de las 3 de la mañana y no solo me enoja, sino que  me da miedo por que es el horario del diablo",
+      "substance_use": "todos los dias tomo un baso de cerveza o una copa de vino",
+      "support_system": "mi novio, pero ya me canso, y mi mama, pero ella tiene sus problemas",
+      "symptoms_duration": "desde que arranque el doctorado",
+      "coping_mechanisms": "me pongo a ver series, pero normalmente me frusto todo el dia y miro tiktoks y me diento mal porque no hice nada en todo el dia y solo me quede con el celu"
+    },
+    "analysis": {
+      "urgency_level": "ALTO",
+      "main_concerns": [
+        "quiero morir"
+      ],
+      "recommendations": [
+        "Buscar ayuda profesional inmediata - contactar servicios de emergencia",
+        "Contactar servicios de emergencia o línea de crisis",
+        "Desarrollar una red de apoyo social y profesional"
+      ],
+      "risk_factors": [
+        "Pensamientos de autolesión o suicidas",
+        "Ausencia de factores protectores identificables"
+      ],
+      "protective_factors": []
+    }
+  }
+}

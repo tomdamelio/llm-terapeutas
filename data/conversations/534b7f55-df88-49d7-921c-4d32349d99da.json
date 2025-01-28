@@ -1,0 +1,38 @@
+{
+  "metadata": {
+    "conversation_id": "534b7f55-df88-49d7-921c-4d32349d99da",
+    "timestamp": "2025-01-28T17:48:47.735920",
+    "version": "1.0"
+  },
+  "conversation": {
+    "responses": {
+      "daily_impact": "me quiero morir ahora, ono entiendo nada",
+      "main_concern": "tengo miedo",
+      "mood_changes": "no",
+      "previous_treatment": "mmmm",
+      "self_harm": "siiiiiiisisisis, ahora ahora haoar",
+      "sleep_patterns": "estoy despierto",
+      "substance_use": "estoy ebrio",
+      "support_system": "yo",
+      "symptoms_duration": "hoy, ahora",
+      "coping_mechanisms": "ebrio? llorar"
+    },
+    "analysis": {
+      "urgency_level": "MEDIO",
+      "main_concerns": [
+        "Fobia específica (cucarachas)",
+        "Ansiedad y evitación en la vida diaria",
+        "Insomnio"
+      ],
+      "recommendations": [
+        "Consulta profesional en los próximos días para una evaluación y tratamiento adecuados"
+      ],
+      "risk_factors": [
+        "Antecedentes de atención psicológica que no ha resultado eficaz"
+      ],
+      "protective_factors": [
+        "Apoyo de la madre"
+      ]
+    }
+  }
+}

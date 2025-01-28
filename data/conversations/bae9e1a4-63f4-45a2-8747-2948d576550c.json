@@ -1,0 +1,36 @@
+{
+  "metadata": {
+    "conversation_id": "bae9e1a4-63f4-45a2-8747-2948d576550c",
+    "timestamp": "2025-01-28T18:36:54.018672",
+    "version": "1.0"
+  },
+  "conversation": {
+    "responses": {
+      "daily_impact": "En el trabajo ya no me bancan",
+      "duration": "Hace mucho",
+      "main_concern": "No me siento nada bien",
+      "mood_changes": "Si, me siento deprimido",
+      "previous_help": "Si, no me serivio",
+      "self_harm": "Si, varias veces",
+      "sleep": "No duermo nada",
+      "substance_use": "No",
+      "support": "Si, mi hermano",
+      "coping_mechanisms": "Me pego"
+    },
+    "analysis": {
+      "urgency_level": "BAJO",
+      "main_concerns": [
+        "Depressed Mood"
+      ],
+      "preliminary_diagnoses": [],
+      "risk_factors": [],
+      "protective_factors": [
+        "Red de apoyo social disponible"
+      ],
+      "recommendations": [
+        "Programar una evaluación profesional cuando sea conveniente",
+        "Mantener registro de síntomas y su frecuencia"
+      ]
+    }
+  }
+}

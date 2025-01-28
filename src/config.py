@@ -8,13 +8,14 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Google Gemini API configuration
-GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY')
-if not GOOGLE_API_KEY:
-    raise ValueError("GOOGLE_API_KEY not found in environment variables")
+GOOGLE_API_KEY = "YOUR_API_KEY_HERE"  # Replace with your actual API key
 
 # Flask configuration
 FLASK_ENV = os.getenv('FLASK_ENV', 'development')
 FLASK_DEBUG = bool(int(os.getenv('FLASK_DEBUG', '0')))
 SECRET_KEY = os.getenv('SECRET_KEY')
 if not SECRET_KEY:
-    raise ValueError("SECRET_KEY not found in environment variables") 
+    raise ValueError("SECRET_KEY not found in environment variables")
+
+# Other configuration settings can be added here
+DEBUG = True 

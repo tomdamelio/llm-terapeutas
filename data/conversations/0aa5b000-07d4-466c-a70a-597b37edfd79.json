@@ -1,0 +1,35 @@
+{
+  "metadata": {
+    "conversation_id": "0aa5b000-07d4-466c-a70a-597b37edfd79",
+    "timestamp": "2025-01-28T17:53:55.681650",
+    "version": "1.0"
+  },
+  "conversation": {
+    "responses": {
+      "daily_impact": "Me paso varias vecesss",
+      "main_concern": "No me siento nada bien, siento una presion en el pecho",
+      "mood_changes": "Siii, ayuda!",
+      "previous_treatment": "No, nunca. Tengo que poder afrontarlo solo",
+      "self_harm": "No",
+      "sleep_patterns": "Me cuesta dormir. Tengo miedo de morirme mientras duermo",
+      "substance_use": "Nunca tome alcohol. Pero una vez fume marihuana y me hizo bien. Entonces cada tanto fumo un poco",
+      "support_system": "Mi padre se enoja cada vez que le digo que tengo miedo",
+      "symptoms_duration": "Ahora mismo. Pero ya me paso antes",
+      "coping_mechanisms": "Voy a la iglesia"
+    },
+    "analysis": {
+      "urgency_level": "BAJO",
+      "main_concerns": [
+        "No me siento nada bien, siento una presion en el pecho"
+      ],
+      "recommendations": [
+        "Programar una consulta de evaluación cuando sea conveniente",
+        "Desarrollar una red de apoyo social y profesional"
+      ],
+      "risk_factors": [
+        "Ausencia de factores protectores identificables"
+      ],
+      "protective_factors": []
+    }
+  }
+}
