@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block title %}Historial - Sistema de Triage en Salud Mental{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-lg-12">
+            <h2 class="mb-4">Historial de Conversaciones</h2>
+            
+            <!-- Filtros y búsqueda -->
+            <div class="card mb-4">
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="input-group">
+                                <span class="input-group-text">
+                                    <i class="fas fa-search"></i>
+                                </span>
+                                <input type="text" class="form-control" id="search-input" 
+                                       placeholder="Buscar conversación...">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <select class="form-select" id="urgency-filter">
+                                <option value="">Todos los niveles de urgencia</option>
+                                <option value="ALTO">Alto</option>
+                                <option value="MEDIO">Medio</option>
+                                <option value="BAJO">Bajo</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <select class="form-select" id="date-filter">
+                                <option value="">Todas las fechas</option>
+                                <option value="today">Hoy</option>
+                                <option value="week">Esta semana</option>
+                                <option value="month">Este mes</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Lista de conversaciones -->
+            <div class="conversation-list" id="conversation-list">
+                <!-- Las conversaciones se cargarán dinámicamente aquí -->
+            </div>
+
+            <!-- Template para cada conversación -->
+            <template id="conversation-template">
+                <div class="card mb-3 conversation-item">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-md-3">
+                                <h6 class="mb-0 text-muted">
+                                    <i class="fas fa-calendar-alt me-2"></i>
+                                    <span class="conversation-date"></span>
+                                </h6>
+                            </div>
+                            <div class="col-md-3">
+                                <span class="badge rounded-pill"></span>
+                            </div>
+                            <div class="col-md-4">
+                                <p class="mb-0 main-concern"></p>
+                            </div>
+                            <div class="col-md-2 text-end">
+                                <button class="btn btn-outline-primary btn-sm view-details">
+                                    <i class="fas fa-eye me-1"></i>Ver detalles
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </template>
+
+            <!-- Modal para ver detalles -->
+            <div class="modal fade" id="conversation-modal" tabindex="-1">
+                <div class="modal-dialog modal-lg">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Detalles de la Conversación</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body">
+                            <div class="conversation-details">
+                                <!-- Los detalles se cargarán dinámicamente -->
+                            </div>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                            <button type="button" class="btn btn-primary" id="download-report">
+                                <i class="fas fa-download me-1"></i>Descargar Reporte
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/history.js') }}"></script>
+{% endblock %} 

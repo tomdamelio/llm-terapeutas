@@ -9,6 +9,7 @@ const sendButton = document.getElementById('send-button');
 const analysisContainer = document.getElementById('analysis-container');
 const analysisContent = document.getElementById('analysis-content');
 const conversationHistory = document.getElementById('conversation-history');
+const typingIndicator = document.getElementById('typing-indicator');
 
 // Variables de estado
 let currentQuestionId = null;
@@ -38,19 +39,8 @@ function createTypingIndicator() {
 
 // Función para mostrar/ocultar el indicador de escritura
 function showTypingIndicator(show = true) {
-    let typingIndicator = document.getElementById('typing-indicator');
-    
-    if (show && !typingIndicator) {
-        typingIndicator = createTypingIndicator();
-        chatMessages.appendChild(typingIndicator);
-    } else if (!show && typingIndicator) {
-        typingIndicator.remove();
-    }
-    
-    if (typingIndicator) {
-        typingIndicator.style.display = show ? 'block' : 'none';
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-    }
+    typingIndicator.style.display = show ? 'block' : 'none';
+    chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 
 // Función para simular el delay de escritura

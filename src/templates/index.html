@@ -1,42 +1,61 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Triage en Salud Mental</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-</head>
-<body>
-    <div class="container">
-        <header>
-            <h1>Sistema de Triage en Salud Mental</h1>
-        </header>
+{% extends "base.html" %}
 
-        <main>
-            <div class="chat-container">
-                <div class="chat-messages" id="chat-messages">
-                    <!-- Aquí se mostrarán los mensajes -->
-                    <div id="typing-indicator" class="typing-indicator">Escribiendo...</div>
-                </div>
+{% block title %}Inicio - Sistema de Triage en Salud Mental{% endblock %}
 
-                <div class="chat-input" id="chat-input">
-                    <input type="text" id="user-input" placeholder="Escribe tu respuesta aquí..." disabled>
-                    <button id="send-button" disabled>Enviar</button>
-                </div>
-            </div>
-
-            <div class="analysis-container" id="analysis-container" style="display: none;">
-                <h2>Resultados del Análisis</h2>
-                <div id="analysis-content"></div>
-            </div>
-        </main>
-
-        <aside class="history-panel">
-            <h2>Historial de Conversaciones</h2>
-            <div id="conversation-history"></div>
-        </aside>
+{% block content %}
+<div class="container">
+    <!-- Hero Section -->
+    <div class="row align-items-center py-5">
+        <div class="col-lg-6">
+            <h1 class="display-4 fw-bold text-primary mb-3">Bienvenido al Sistema de Triage en Salud Mental</h1>
+            <p class="lead mb-4">Un espacio seguro para compartir tus preocupaciones y recibir orientación profesional inicial.</p>
+            <a href="{{ url_for('chat') }}" class="btn btn-primary btn-lg">
+                <i class="fas fa-comments me-2"></i>Comenzar Conversación
+            </a>
+        </div>
+        <div class="col-lg-6">
+            <img src="{{ url_for('static', filename='img/mental-health.svg') }}" alt="Salud Mental" class="img-fluid">
+        </div>
     </div>
 
-    <script src="{{ url_for('static', filename='js/chat.js') }}"></script>
-</body>
-</html> 
+    <!-- Features Section -->
+    <div class="row py-5">
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="fas fa-user-shield fa-3x text-primary mb-3"></i>
+                    <h3 class="card-title h4">Confidencialidad</h3>
+                    <p class="card-text">Tus conversaciones son privadas y seguras. Nos tomamos en serio la protección de tu información.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="fas fa-brain fa-3x text-primary mb-3"></i>
+                    <h3 class="card-title h4">Evaluación Profesional</h3>
+                    <p class="card-text">Análisis basado en criterios clínicos establecidos para una orientación inicial efectiva.</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 shadow-sm">
+                <div class="card-body text-center">
+                    <i class="fas fa-hands-helping fa-3x text-primary mb-3"></i>
+                    <h3 class="card-title h4">Apoyo Inmediato</h3>
+                    <p class="card-text">Recibe recomendaciones personalizadas y recursos útiles para tu situación específica.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Call to Action -->
+    <div class="text-center py-5">
+        <h2 class="mb-4">¿Necesitas hablar con alguien?</h2>
+        <p class="lead mb-4">Estamos aquí para escucharte y brindarte el apoyo inicial que necesitas.</p>
+        <a href="{{ url_for('chat') }}" class="btn btn-primary btn-lg">
+            <i class="fas fa-comment-dots me-2"></i>Iniciar Chat
+        </a>
+    </div>
+</div>
+{% endblock %} 

@@ -1,3 +1,15 @@
+/* Variables globales */
+:root {
+    --primary-color: #007bff;
+    --secondary-color: #6c757d;
+    --success-color: #28a745;
+    --danger-color: #dc3545;
+    --warning-color: #ffc107;
+    --info-color: #17a2b8;
+    --light-color: #f8f9fa;
+    --dark-color: #343a40;
+}
+
 /* Estilos generales */
 * {
     margin: 0;
@@ -9,7 +21,7 @@ body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     line-height: 1.6;
     background-color: #f0f2f5;
-    color: #1a1a1a;
+    color: var(--dark-color);
 }
 
 .container {
@@ -71,6 +83,8 @@ main {
     border-radius: 15px;
     position: relative;
     word-wrap: break-word;
+    opacity: 0;
+    animation: fadeIn 0.3s ease-in forwards;
 }
 
 .bot-message {
@@ -256,10 +270,125 @@ main {
     }
 
     .chat-container {
-        height: calc(100vh - 160px);
+        height: calc(100vh - 200px);
     }
 
     .message {
         max-width: 90%;
     }
+}
+
+/* Navbar personalizado */
+.navbar {
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.navbar-brand {
+    font-weight: 600;
+}
+
+/* Cards y contenedores */
+.card {
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+/* Badges personalizados */
+.badge.urgency-high {
+    background-color: var(--danger-color);
+}
+
+.badge.urgency-medium {
+    background-color: var(--warning-color);
+    color: var(--dark-color);
+}
+
+.badge.urgency-low {
+    background-color: var(--success-color);
+}
+
+/* Botones personalizados */
+.btn {
+    border-radius: 5px;
+    font-weight: 500;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    border-color: var(--primary-color);
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+}
+
+/* Animaciones */
+.fade-in {
+    animation: fadeIn 0.5s ease-in;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Estilos para el historial */
+.conversation-item:hover {
+    background-color: rgba(0,123,255,0.05);
+}
+
+/* Estilos para el análisis */
+.analysis-section {
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    border-radius: 8px;
+    background-color: var(--light-color);
+}
+
+.analysis-section h4 {
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+}
+
+/* Utilidades */
+.shadow-sm {
+    box-shadow: 0 0.125rem 0.25rem rgba(0,0,0,0.075);
+}
+
+.shadow-md {
+    box-shadow: 0 0.5rem 1rem rgba(0,0,0,0.15);
+}
+
+.rounded-lg {
+    border-radius: 0.5rem;
+}
+
+/* Estilos para el footer */
+.footer {
+    margin-top: auto;
+    padding: 1rem 0;
+    background-color: var(--dark-color);
+    color: var(--light-color);
+}
+
+/* Estilos para los iconos */
+.icon-container {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background-color: rgba(0,123,255,0.1);
+    margin-bottom: 1rem;
+}
+
+.icon-container i {
+    color: var(--primary-color);
+    font-size: 1.5rem;
 } 
